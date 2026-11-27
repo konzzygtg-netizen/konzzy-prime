@@ -459,12 +459,12 @@ button,a,[role="button"],.nav-item,.feature-card,.quick-action,.clickable{ -webk
   <button class="secondary" onclick="openAlightPreset()">Buka proyek di Alight Motion</button>
  </div>
  <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
-  <b>📦 Ambil preset & XML lewat link</b>
-  <p class="muted">Tempel satu link yang dibagikan kreator. Link Alight Motion akan dibuka untuk impor ke aplikasi; link file langsung .xml/.zip/.alight akan dicoba diunduh.</p>
-  <label class="muted" for="amDownloadUrl">Link preset / XML / proyek</label>
-  <input id="amDownloadUrl" class="field" inputmode="url" placeholder="https://alight.link/... atau https://.../preset.xml"/>
-  <div class="tool-row"><button class="primary" onclick="getAlightFromLink()">Ambil preset & XML</button><button class="secondary" onclick="clearAlightPreset()">Bersihkan</button></div>
-  <div id="amPresetOutput" class="output" aria-live="polite">Tempel link proyek atau file preset/XML yang dibagikan kreator.</div>
+  <b>📦 Ambil preset & XML dari link VT TikTok</b>
+  <p class="muted">Tempel link VT TikTok. KONZZY PRIME akan membuka sumber video dan membantu mencari link preset/XML yang dibagikan kreator. Jika kreator menyediakan link Alight Motion, tempel link itu untuk impor.</p>
+  <label class="muted" for="amDownloadUrl">Link VT TikTok</label>
+  <input id="amDownloadUrl" class="field" inputmode="url" placeholder="https://vt.tiktok.com/..."/>
+  <div class="tool-row"><button class="primary" onclick="getAlightFromLink()">Cari preset & XML</button><button class="secondary" onclick="clearAlightPreset()">Bersihkan</button></div>
+  <div id="amPresetOutput" class="output" aria-live="polite">Tempel link VT TikTok untuk mulai mencari sumber preset yang dibagikan kreator.</div>
  </div>
  <div class="note"><b>Cara menggunakan link</b><ol class="muted" style="line-height:1.7;padding-left:20px"><li>Salin link preset/proyek yang dibagikan kreator.</li><li>Tempel ke kolom link, lalu tekan Ambil preset & XML.</li><li>Jika link Alight Motion, buka di Android dan tekan Import.</li><li>Jika link file XML/proyek langsung, file akan dicoba diunduh dari sumbernya.</li></ol><small class="muted">Link TikTok saja tidak berisi XML atau data proyek. File XML hanya bisa diunduh jika kreator memang menyediakan URL file XML.</small></div>
 </div></div></div></section>
@@ -761,24 +761,18 @@ function checkAlightPreset(){
  const small=document.createElement('small');small.className='muted';small.textContent='Pemeriksaan ini hanya mengenali format dan domain tautan. KONZZY PRIME tidak dapat memastikan isi preset sebelum dibuka di Alight Motion.';out.append(small);
 }
 async function getAlightFromLink(){
- const raw=($('amDownloadUrl')?.value||'').trim(),out=$('amPresetOutput');out.textContent='';
- let u;try{u=new URL(raw)}catch{out.textContent='Link tidak valid. Tempel link lengkap yang diawali https://';return}
- if(!['https:','http:'].includes(u.protocol)){out.textContent='Hanya link http/https yang didukung.';return}
- const host=u.hostname.toLowerCase();
- const isAlight=/(^|\.)(alight\.link|alightmotion\.com)$/.test(host);
- if(isAlight){out.textContent='Link proyek Alight Motion terdeteksi. Membuka link agar bisa diimpor melalui aplikasi Alight Motion…';window.open(u.href,'_blank','noopener,noreferrer');return}
- const path=u.pathname.toLowerCase();
- const ext=path.match(/\.(xml|zip|alight)$/);
- if(!ext){out.textContent='Link ini bukan link Alight Motion atau URL file .xml/.zip/.alight langsung. Minta kreator membagikan link proyek Alight Motion atau link file preset.';return}
- out.textContent='Mencoba mengunduh file preset dari link…';
- try{
-  const res=await fetch(u.href,{mode:'cors'});if(!res.ok)throw new Error('Server sumber merespons '+res.status);
-  const blob=await res.blob();if(!blob.size)throw new Error('File kosong');
-  const objectUrl=URL.createObjectURL(blob),a=document.createElement('a');a.href=objectUrl;a.download='konnzzy-preset'+ext[0];document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
-  out.textContent='File '+ext[0]+' berhasil disiapkan untuk diunduh. Jika XML, file ini adalah XML dari kreator; bukan hasil konversi video.';
- }catch(e){
-  out.textContent='Browser tidak dapat mengambil file dari server (misalnya dibatasi CORS). Coba buka link sumber secara langsung. Detail: '+e.message;
-  const a=document.createElement('a');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Buka link file sumber ↗';a.style='display:inline-block;margin-top:10px;color:var(--cyan);font-weight:800';out.append(a);
+ const raw=($('amDownloadUrl')?.value||'').trim(),out=$('amPresetOutput');out.innerHTML='';
+ let u;try{u=new URL(raw)}catch{out.textContent='Link tidak valid. Tempel link VT TikTok yang lengkap.';return}
+ if(!['https:','http:'].includes(u.protocol)||!/(^|\\.)tiktok\\.com$/i.test(u.hostname)){out.textContent='Kolom ini hanya menerima link TikTok, misalnya https://vt.tiktok.com/...';return}
+ const p=document.createElement('p');p.textContent='Link VT TikTok terdeteksi. Membuka video sumber agar kamu dapat memeriksa caption, bio, dan komentar kreator untuk link preset/XML.';out.append(p);
+ const a=document.createElement('a');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Buka video TikTok ↗';a.style='display:inline-block;margin:8px 0;color:var(--cyan);font-weight:800';out.append(a);
+ const tip=document.createElement('p');tip.className='muted';tip.textContent='Jika kreator membagikan link Alight Motion atau file XML di caption/bio/komentar, salin link tersebut. Tempel link proyek pada kolom Link proyek Alight Motion di atas untuk membukanya di Android. Link VT sendiri tidak memuat data layer, keyframe, efek, atau XML proyek.';out.append(tip);
+ const project=$('amProjectUrl');
+ if(project&&project.value.trim()){
+  const pu=validWebLink(project.value.trim());
+  if(pu&&isAlightHost(pu.hostname)){
+   const q=document.createElement('p');q.textContent='Link proyek Alight Motion sudah terisi. Gunakan tombol “Buka di Alight Motion” untuk mengimpornya.';out.append(q);
+  }
  }
 }
 function openAlightPreset(){
@@ -809,7 +803,7 @@ function downloadAlightXml(){
  const url=URL.createObjectURL(f),a=document.createElement('a');a.href=url;a.download=f.name.replace(/\.xml$/i,'')+'-konnzzy.xml';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);out.textContent='Salinan XML disiapkan untuk diunduh.';
 }
 
-function clearAlightPreset(){if($('amSourceUrl'))$('amSourceUrl').value='';if($('amProjectUrl'))$('amProjectUrl').value='';if($('amDownloadUrl'))$('amDownloadUrl').value='';if($('amPresetOutput'))$('amPresetOutput').textContent='Tempel link proyek atau file preset/XML yang dibagikan kreator.'}
+function clearAlightPreset(){if($('amSourceUrl'))$('amSourceUrl').value='';if($('amProjectUrl'))$('amProjectUrl').value='';if($('amDownloadUrl'))$('amDownloadUrl').value='';if($('amPresetOutput'))$('amPresetOutput').textContent='Tempel link VT TikTok untuk mulai mencari sumber preset yang dibagikan kreator.'}
 
 function validTikTok(){const u=$('tiktokUrl').value.trim();try{const x=new URL(u);if(!/(^|\.)tiktok\.com$/i.test(x.hostname))throw 0;return x.href}catch{toast('Masukkan tautan TikTok yang valid');return null}}
 function openTikTok(){const u=validTikTok();if(u)window.open(u,'_blank','noopener,noreferrer')}
