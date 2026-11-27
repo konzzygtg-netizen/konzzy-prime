@@ -646,7 +646,11 @@ function ownerDeleteAccount(key){
  const a=get('accounts',{});delete a[key];put('accounts',a);renderOwnerAccounts()
 }
 
-startApp();
+// Always show the branded KONZZY PRIME crown intro first on page load.
+const openingIntro=document.getElementById('introScreen');
+if(openingIntro){openingIntro.style.display='grid';openingIntro.classList.remove('hide');}
+document.getElementById('loginScreen')?.classList.add('hidden');
+document.getElementById('app')?.classList.add('hidden');
 
 function enterNexus(){
  const intro=document.getElementById('introScreen');
