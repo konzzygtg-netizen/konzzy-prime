@@ -679,13 +679,23 @@ function copyTikTokLink(){const u=validTikTok();if(!u)return;if(navigator.clipbo
 function previewTikTok(){
  const u=validTikTok();if(!u)return;const out=$('tiktokPreview');out.innerHTML='';
  const link=document.createElement('a');link.href=u;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Buka konten asli di TikTok ↗';link.style='color:var(--cyan);font-weight:800';out.append(link);
- let kind='Tautan TikTok';let id='';
+ let kind='Tautan TikTok',id='',isVideo=false,isPhoto=false,isSound=false;
  const video=u.match(/\/video\/(\d+)/),photo=u.match(/\/photo\/(\d+)/),sound=u.match(/\/music\/[^/?]+-(\d+)/)||u.match(/\/music\/(\d+)/);
- if(video){kind='Video TikTok';id=video[1]}else if(photo){kind='Postingan foto / slideshow TikTok';id=photo[1]}else if(sound){kind='Halaman sound TikTok'}else if(/vm\.tiktok\.com|vt\.tiktok\.com/i.test(new URL(u).hostname)){kind='Link pendek TikTok';}
+ if(video){kind='Video TikTok';id=video[1];isVideo=true}else if(photo){kind='Postingan foto / slideshow TikTok';id=photo[1];isPhoto=true}else if(sound){kind='Halaman sound TikTok';isSound=true}else if(/vm\.tiktok\.com|vt\.tiktok\.com/i.test(new URL(u).hostname)){kind='Link pendek TikTok';}
  const info=document.createElement('p');info.className='muted';info.style.marginTop='12px';info.textContent='Jenis konten terdeteksi: '+kind+'.';out.append(info);
- if(id){const frame=document.createElement('iframe');frame.src='https://www.tiktok.com/player/v1/'+id+'?music_info=1&description=1';frame.style='width:min(100%,420px);height:680px;border:0;border-radius:12px;margin-top:12px;background:#080d1b';frame.allow='accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture; web-share';frame.loading='lazy';out.append(frame)}
- const tip=document.createElement('p');tip.className='muted';tip.style.marginTop='12px';tip.textContent=(video?'Untuk menyimpan video, buka konten lalu pilih Bagikan → Simpan video jika tersedia.':photo?'Untuk menyimpan foto, buka postingan lalu pilih Bagikan → Simpan foto jika tersedia.':sound?'Sound dapat dibuka dan disimpan ke Favorit dari aplikasi TikTok; file audio tidak dapat diunduh langsung melalui halaman ini.':'Buka tautan di TikTok untuk melihat opsi simpan yang disediakan kreator.');out.append(tip);
+ if(isVideo&&id){
+   const btn=document.createElement('button');btn.className='secondary';btn.textContent='Muat pratinjau video';btn.style.marginTop='10px';
+   btn.onclick=()=>{if(out.querySelector('iframe'))return;const frame=document.createElement('iframe');frame.src='https://www.tiktok.com/player/v1/'+id+'?music_info=1&description=1';frame.title='Pratinjau TikTok';frame.style='width:100%;max-width:420px;height: min(680px, 115vw);border:0;border-radius:12px;margin-top:12px;background:#080d1b';frame.allow='fullscreen; picture-in-picture';frame.loading='lazy';frame.referrerPolicy='strict-origin-when-cross-origin';out.append(frame);btn.disabled=true;btn.textContent='Pratinjau dimuat'};
+   out.append(btn);
+ }
+ const guide=document.createElement('div');guide.className='note';guide.style.marginTop='14px';
+ if(isVideo) guide.innerHTML='<b>Simpan video (jika diizinkan kreator)</b><ol><li>Buka konten di aplikasi TikTok.</li><li>Tekan Bagikan.</li><li>Pilih Simpan video.</li></ol><small class="muted">Jika tombol Simpan video tidak ada, kreator menonaktifkan unduhan. KONZZY PRIME tidak melewati pembatasan tersebut.</small>';
+ else if(isPhoto) guide.innerHTML='<b>Simpan foto/slideshow</b><ol><li>Buka postingan di aplikasi TikTok.</li><li>Tekan Bagikan → Simpan foto.</li><li>Pilih foto yang ingin disimpan, lalu Simpan.</li></ol><small class="muted">Opsi ini hanya tersedia jika kreator mengizinkan unduhan.</small>';
+ else if(isSound) guide.innerHTML='<b>Sound TikTok</b><p class="muted">Buka halaman sound di TikTok. Untuk file audio, gunakan file asli milikmu atau audio yang memang boleh kamu gunakan; link sound tidak otomatis menjadi MP3.</p>';
+ else guide.innerHTML='<b>Link TikTok</b><p class="muted">Buka tautan di aplikasi TikTok untuk melihat jenis konten dan opsi simpan resmi.</p>';
+ out.append(guide);
 }
+
 window.addEventListener('beforeunload',()=>{if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop())});
 
 </script>
@@ -696,7 +706,7 @@ window.addEventListener('beforeunload',()=>{if(cameraStream)cameraStream.getTrac
   if(intro){
     intro.style.display='grid'; intro.classList.remove('hide'); intro.style.animation='none'; void intro.offsetWidth; intro.style.animation='kpBlackout 4.1s ease-out both';
     const layer=document.createElement('div'); layer.className='nx-particle-layer';
-    for(let i=0;i< thirty();i++){
+    for(let i=0;i<(window.matchMedia('(max-width: 600px)').matches?8:30);i++){
       const p=document.createElement('i'); p.className='nx-particle';
       p.style.left=(3+Math.random()*94)+'%';
       p.style.setProperty('--dur',(6+Math.random()*8)+'s');
@@ -764,6 +774,18 @@ window.addEventListener('beforeunload',()=>{if(cameraStream)cameraStream.getTrac
 #dashboardTransition .dt-k-mark{display:block!important;position:relative!important;margin:0!important;padding:0!important;width:max-content!important;height:auto!important;line-height:1!important;letter-spacing:0!important;text-align:center!important;transform-origin:50% 50%!important}
 </style>
 
+<style id="konzzy-mobile-performance">
+@media(max-width:600px){
+  *,*::before,*::after{scroll-behavior:auto!important}
+  .nx-particle:nth-child(n+9){display:none!important}
+  .nx-click-wave,#clickFx{display:none!important}
+  #media .panel,#media .output{min-width:0;max-width:100%;overflow-wrap:anywhere}
+  #media iframe{max-width:100%!important}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+</style>
 </body></html>
 
 <style id="kp-v24-visual-center-hard-fix">
