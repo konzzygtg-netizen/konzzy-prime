@@ -1,0 +1,20 @@
+# KONZZY PRIME
+
+Aplikasi asisten AI dengan tampilan futuristik.
+
+## Fitur
+- AI Chat
+- Bantuan PR dan rangkuman materi
+- Kalkulator
+- Catatan dan jadwal tugas
+- Kuis otomatis
+- Penerjemah
+- Pembuat makalah dan presentasi
+- Riwayat percakapan
+- Profil dan pengaturan akun
+
+## Instalasi
+Buka file `index.html` menggunakan browser.
+
+## Catatan Keamanan
+Jangan mengunggah file `.env`, API key, atau password ke repository GitHub.
