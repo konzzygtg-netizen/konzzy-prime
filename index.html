@@ -411,7 +411,7 @@ button,a,[role="button"],.nav-item,.feature-card,.quick-action,.clickable{ -webk
   <button class="nav" data-page="plugins"><span class="ico">▦</span>Plugin Library</button>
   <button class="nav" data-page="library"><span class="ico">▧</span>Image Library</button>
   <button class="nav" data-page="imagegen"><span class="ico">✧</span>AI Image Studio</button>
-  <div class="side-bottom"><div class="user-mini"><div class="avatar" id="sideAvatar">N</div><div><b id="sideName">Pengguna</b><div class="side-account-meta" id="sideAccountMeta">MEMBER</div></div></div><button class="nav owner-only hidden" data-page="ownerAccounts" style="margin-top:12px" id="ownerAccountsNav">♛ Kelola Akun Member</button><button class="nav" data-page="profile" style="margin-top:12px">⚙ Profil & Pengaturan</button><button class="nav" onclick="logout()">⇥ Keluar</button></div>
+  <div class="side-bottom"><div class="user-mini"><div class="avatar" id="sideAvatar">N</div><div><b id="sideName">Pengguna</b><div class="side-account-meta" id="sideAccountMeta">MEMBER</div></div></div><button class="nav reseller-only hidden" data-page="resellerAccounts" style="margin-top:12px" id="resellerAccountsNav">＋ Buat Akun Member</button><button class="nav owner-only hidden" data-page="ownerAccounts" style="margin-top:12px" id="ownerAccountsNav">♛ Kelola Akun Member</button><button class="nav" data-page="profile" style="margin-top:12px">⚙ Profil & Pengaturan</button><button class="nav" onclick="logout()">⇥ Keluar</button></div>
  </aside>
  <main class="main">
   <header class="topbar"><div style="display:flex;align-items:center;gap:12px"><button class="secondary mobile-menu" onclick="toggleMenu()">☰</button><h1 id="pageTitle">Dashboard</h1></div><div class="topright"><div class="avatar" id="topAvatar">N</div></div></header>
@@ -483,8 +483,9 @@ button,a,[role="button"],.nav-item,.feature-card,.quick-action,.clickable{ -webk
  <div class="settings-row"><div><b>Efek suara klik</b><div class="muted" style="font-size:12px">Bunyi kecil saat menekan tombol</div></div><label><input id="soundToggle" type="checkbox" onchange="localStorage.setItem('nexus_sound',this.checked?'1':'0')"> Aktif</label></div>
 </div>
 </div></section>
-  <section id="ownerAccounts" class="page"><div class="panel" style="max-width:900px"><h2>♛ Kelola Akun Member</h2><p class="muted">Khusus Owner. Buat akun dan aktifkan akses member secara manual.</p><div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px"><div><label class="muted">Nama pengguna</label><input id="ownerNewName" class="field" placeholder="Nama akun"></div><div><label class="muted">Kata sandi</label><input id="ownerNewPass" class="field" type="password" placeholder="Minimal 6 karakter"></div><div><label class="muted">Paket akun</label><select id="ownerNewPlan" class="field"><option>Member Permanent</option><option>Reseller</option></select></div><div><label class="muted">Durasi akun</label><select id="ownerNewDuration" class="field"><option value="1">1 Hari</option><option value="7">7 Hari</option><option value="30" selected>30 Hari</option><option value="90">90 Hari</option><option value="180">180 Hari</option><option value="365">365 Hari</option><option value="permanent">Permanen</option></select></div></div><p class="muted" style="font-size:11px;margin:8px 0 12px">Akun Owner utama hanya untuk pembuat aplikasi (Konzzy). Hanya Owner utama yang dapat membuat akun Member dan Reseller.</p><button class="primary" onclick="ownerCreateAccount()">＋ BUAT AKUN AKTIF</button><div id="ownerAccountNotice" class="muted" style="margin-top:10px"></div><hr style="border-color:var(--line);margin:22px 0"><h3>Daftar akun</h3><div id="ownerAccountList"></div></div></section>
- </main>
+  <section id="ownerAccounts" class="page"><div class="panel" style="max-width:900px"><h2>♛ Kelola Akun Member</h2><p class="muted">Khusus Owner. Buat akun dan aktifkan akses member secara manual.</p><div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px"><div><label class="muted">Nama pengguna</label><input id="ownerNewName" class="field" placeholder="Nama akun"></div><div><label class="muted">Kata sandi</label><input id="ownerNewPass" class="field" type="password" placeholder="Minimal 6 karakter"></div><div><label class="muted">Paket akun</label><select id="ownerNewPlan" class="field"><option>Member Permanent</option><option>Partner Member</option><option>Reseller</option></select></div><div><label class="muted">Durasi akun</label><select id="ownerNewDuration" class="field"><option value="1">1 Hari</option><option value="7">7 Hari</option><option value="30" selected>30 Hari</option><option value="90">90 Hari</option><option value="180">180 Hari</option><option value="365">365 Hari</option><option value="permanent">Permanen</option></select></div></div><p class="muted" style="font-size:11px;margin:8px 0 12px">Akun Partner Member hanya dapat dibuat Owner. Reseller hanya dapat membuat akun Member. Member dan Partner Member tidak dapat membuat akun.</p><button class="primary" onclick="ownerCreateAccount()">＋ BUAT AKUN AKTIF</button><div id="ownerAccountNotice" class="muted" style="margin-top:10px"></div><hr style="border-color:var(--line);margin:22px 0"><h3>Daftar akun</h3><div id="ownerAccountList"></div></div></section>
+ <section id="resellerAccounts" class="page"><div class="panel" style="max-width:900px"><h2>＋ Buat Akun Member</h2><p class="muted">Khusus Reseller. Kamu hanya dapat membuat akun Member, bukan Reseller atau Partner Member.</p><div class="grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px"><div><label class="muted">Nama pengguna</label><input id="resellerNewName" class="field" placeholder="Nama akun Member"></div><div><label class="muted">Kata sandi</label><input id="resellerNewPass" class="field" type="password" placeholder="Minimal 6 karakter"></div><div><label class="muted">Durasi akun</label><select id="resellerNewDuration" class="field"><option value="1">1 Hari</option><option value="7">7 Hari</option><option value="30" selected>30 Hari</option><option value="90">90 Hari</option><option value="180">180 Hari</option><option value="365">365 Hari</option><option value="permanent">Permanen</option></select></div></div><button class="primary" onclick="resellerCreateMember()">＋ BUAT AKUN MEMBER</button><div id="resellerAccountNotice" class="muted" style="margin-top:10px"></div><hr style="border-color:var(--line);margin:22px 0"><h3>Akun Member yang dibuat</h3><div id="resellerAccountList"></div></div></section>
+</main>
 </div><div class="toast" id="toast"></div><button id="nexusFloat" title="Buka asisten KONZZY PRIME" onclick="showPage('chat')">✦</button>
 <script>
 const $=id=>document.getElementById(id);
@@ -542,10 +543,10 @@ function updateUser(){
  if($('accountRoleBadge'))$('accountRoleBadge').textContent='● '+(isOwner?'OWNER':(acc?.plan==='Reseller'?'RESELLER':'MEMBER'));
  if($('loginTimeText'))$('loginTimeText').textContent='Waktu masuk: '+formatted;
  if($('sideAccountMeta'))$('sideAccountMeta').textContent=isOwner?'OWNER • LIFETIME':(acc?.plan==='Reseller'?'RESELLER':'MEMBER');
- const ownerNav=$('ownerAccountsNav');if(ownerNav)ownerNav.classList.toggle('hidden',!isOwner);
+ const ownerNav=$('ownerAccountsNav');if(ownerNav)ownerNav.classList.toggle('hidden',!isOwner);const resellerNav=$('resellerAccountsNav');if(resellerNav)resellerNav.classList.toggle('hidden',!(acc?.plan==='Reseller'));
 }
-const titles={dashboard:'Dashboard',chat:'AI Chat',homework:'Bantuan PR',summary:'Rangkuman Materi',calculator:'Kalkulator',notes:'Catatan',tasks:'Jadwal Tugas',quiz:'Kuis Otomatis',translate:'Penerjemah',essay:'Pembuat Makalah',slides:'Pembuat Presentasi',image:'Upload Foto Soal',history:'Riwayat Percakapan',profile:'Profil & Pengaturan',ownerAccounts:'Kelola Akun Member',plugins:'Plugin Library',library:'Image Library',imagegen:'AI Image Studio'};
-function showPage(id){if(id==='ownerAccounts'&&(!currentUser||currentUser.toLowerCase()!=='konzzy')){toast('Menu ini khusus Owner');return}document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='ownerAccounts')renderOwnerAccounts();document.querySelectorAll('.nav[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===id));$('pageTitle').textContent=titles[id]||id;$('sidebar').classList.remove('open');if(id==='history')renderHistory();if(id==='notes')renderNotes();if(id==='tasks')renderTasks()}
+const titles={resellerAccounts:'Buat Akun Member',dashboard:'Dashboard',chat:'AI Chat',homework:'Bantuan PR',summary:'Rangkuman Materi',calculator:'Kalkulator',notes:'Catatan',tasks:'Jadwal Tugas',quiz:'Kuis Otomatis',translate:'Penerjemah',essay:'Pembuat Makalah',slides:'Pembuat Presentasi',image:'Upload Foto Soal',history:'Riwayat Percakapan',profile:'Profil & Pengaturan',ownerAccounts:'Kelola Akun Member',plugins:'Plugin Library',library:'Image Library',imagegen:'AI Image Studio'};
+function showPage(id){if(id==='ownerAccounts'&&(!isOwnerUser())){toast('Menu ini khusus Owner');return}if(id==='resellerAccounts'&&!isResellerUser()){toast('Menu ini khusus Reseller');return}document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');if(id==='ownerAccounts')renderOwnerAccounts();if(id==='resellerAccounts')renderResellerAccounts();document.querySelectorAll('.nav[data-page]').forEach(x=>x.classList.toggle('active',x.dataset.page===id));$('pageTitle').textContent=titles[id]||id;$('sidebar').classList.remove('open');if(id==='history')renderHistory();if(id==='notes')renderNotes();if(id==='tasks')renderTasks()}
 document.querySelectorAll('.nav[data-page]').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
 function toggleMenu(){$('sidebar').classList.toggle('open')}
 function filterMenu(q){const term=(q||'').toLowerCase().trim();document.querySelectorAll('#sidebar .nav[data-page]').forEach(btn=>{btn.style.display=btn.textContent.toLowerCase().includes(term)?'flex':'none'});document.querySelectorAll('#sidebar .nav-label').forEach(label=>{let next=label.nextElementSibling,has=false;while(next&&!next.classList.contains('nav-label')&&!next.classList.contains('side-bottom')){if(next.classList.contains('nav')&&next.style.display!=='none')has=true;next=next.nextElementSibling}label.style.display=has?'block':'none'})}
@@ -607,8 +608,29 @@ function renderHistory(){let a=get('history');$('historyList').innerHTML=a.lengt
 function clearHistory(){if(confirm('Hapus semua riwayat?')){put('history',[]);renderHistory();updateStats()}}
 function saveProfile(){let n=$('profileNameInput').value.trim();if(!n){toast('Nama tidak boleh kosong');return}currentUser=n;localStorage.setItem('nexus_user',n);updateUser();toast('Profil diperbarui')}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function isOwnerUser(){return !!currentUser&&currentUser.toLowerCase()==='konzzy'}
+function isResellerUser(){const a=get('accounts',{});return !!currentUser&&a[currentUser.toLowerCase()]?.plan==='Reseller'&&a[currentUser.toLowerCase()]?.status==='Aktif'}
+function resellerCreateMember(){
+ if(!isResellerUser()){alert('Hanya Reseller aktif yang dapat membuat akun Member.');return}
+ const name=$('resellerNewName').value.trim(),pass=$('resellerNewPass').value,duration=$('resellerNewDuration').value;
+ if(!name||pass.length<6){alert('Isi nama akun dan kata sandi minimal 6 karakter.');return}
+ if(name.toLowerCase()==='konzzy'){alert('Nama tersebut khusus Owner.');return}
+ const accounts=get('accounts',{}),key=name.toLowerCase();
+ if(accounts[key]){alert('Nama akun sudah digunakan.');return}
+ const createdAt=new Date(),expiresAt=duration==='permanent'?null:new Date(createdAt.getTime()+Number(duration)*86400000).toISOString();
+ accounts[key]={name,password:pass,plan:'Member Permanent',status:'Aktif',createdAt:createdAt.toISOString(),expiresAt,duration:duration==='permanent'?'Permanen':Number(duration)+' hari',createdBy:currentUser,createdByRole:'Reseller'};
+ put('accounts',accounts);$('resellerNewName').value='';$('resellerNewPass').value='';
+ $('resellerAccountNotice').textContent='Akun Member '+name+' berhasil dibuat.';
+ renderResellerAccounts();
+}
+function renderResellerAccounts(){
+ const out=$('resellerAccountList');if(!out)return;
+ if(!isResellerUser()){out.innerHTML='<p class="muted">Menu khusus Reseller aktif.</p>';return}
+ const accounts=get('accounts',{}),entries=Object.entries(accounts).filter(([k,a])=>a.createdBy===currentUser&&a.plan==='Member Permanent');
+ out.innerHTML=entries.length?entries.map(([key,a])=>{const exp=a.expiresAt?new Date(a.expiresAt):null;const status=a.expiresAt&&exp&&Date.now()>exp.getTime()?'Kedaluwarsa':a.status;return '<div class="owner-account-row"><div><b>'+esc(a.name||key)+'</b><br><small>Member · '+esc(status||'Aktif')+'</small></div></div>'}).join(''):'<p class="muted">Belum ada akun Member yang kamu buat.</p>';
+}
 function ownerCreateAccount(){
- if(!currentUser||currentUser.toLowerCase()!=='konzzy'){alert('Fitur ini khusus Owner utama.');return}
+ if(!isOwnerUser()){alert('Fitur ini khusus Owner utama.');return}
  const name=$('ownerNewName').value.trim(),pass=$('ownerNewPass').value,plan=$('ownerNewPlan').value,duration=$('ownerNewDuration').value;
  if(!name||pass.length<6){alert('Isi nama dan kata sandi minimal 6 karakter.');return}
  if(name.toLowerCase()==='konzzy'){alert('Nama tersebut khusus Owner utama.');return}
@@ -623,7 +645,7 @@ function ownerCreateAccount(){
 }
 function renderOwnerAccounts(){
  const out=$('ownerAccountList');if(!out)return;
- if(!currentUser||currentUser.toLowerCase()!=='konzzy'){out.innerHTML='<p class="muted">Akses Owner utama saja.</p>';return}
+ if(!isOwnerUser()){out.innerHTML='<p class="muted">Akses Owner utama saja.</p>';return}
  const accounts=get('accounts',{}),entries=Object.entries(accounts);
  out.innerHTML=entries.length?entries.map(([key,a])=>{
   let exp=a.expiresAt?new Date(a.expiresAt):null,expired=exp&&!isNaN(exp.getTime())&&Date.now()>exp.getTime();
@@ -634,7 +656,7 @@ function renderOwnerAccounts(){
  put('accounts',accounts);
 }
 function ownerToggleAccount(key){
- if(!currentUser||currentUser.toLowerCase()!=='konzzy')return;
+ if(!isOwnerUser())return;
  const a=get('accounts',{});if(!a[key])return;
  if(a[key].expiresAt&&Date.now()>new Date(a[key].expiresAt).getTime()){alert('Akun sudah kedaluwarsa. Buat akun baru untuk memberi masa aktif baru.');a[key].status='Kedaluwarsa';}
  else a[key].status=a[key].status==='Aktif'?'Dinonaktifkan':'Aktif';
