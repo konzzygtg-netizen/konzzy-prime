@@ -10,6 +10,15 @@
 @media(max-width:900px){.sidebar{width:215px}.cards{grid-template-columns:repeat(2,1fr)}.tool-grid{grid-template-columns:repeat(2,1fr)}.workspace{grid-template-columns:1fr}}
 @media(max-width:650px){.app{display:block}.sidebar{position:fixed;z-index:5;left:-270px;top:0;bottom:0;width:250px;transition:.25s;box-shadow:20px 0 60px #0008}.sidebar.open{left:0}.mobile-menu{display:inline-block}.main{padding:17px 13px}.topbar{margin-bottom:18px}.topright .pill{display:none}.cards{gap:9px}.stat{padding:13px}.tool-grid,.two{grid-template-columns:1fr}.welcome{padding:21px}.chatbox{height:52vh}}
 
+/* Sidebar menu scrolls independently; the main page stays in place. */
+#sidebar{height:100vh;height:100dvh;position:sticky;top:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#52648a transparent}
+#sidebar::-webkit-scrollbar{width:6px}
+#sidebar::-webkit-scrollbar-thumb{background:#52648a;border-radius:10px}
+#sidebar .side-bottom{margin-top:auto;flex-shrink:0}
+@media(max-width:650px){
+ #sidebar{position:fixed;top:0;bottom:0;height:100vh;height:100dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:max(22px,env(safe-area-inset-bottom))}
+ #sidebar.open{left:0}
+}
 /* KONZZY PRIME anime intro + motion layer */
 :root{--accent:#9b6cff;--accent2:#36d8ff}
 body{transition:background .45s,color .35s}
@@ -450,14 +459,14 @@ button,a,[role="button"],.nav-item,.feature-card,.quick-action,.clickable{ -webk
   <button class="secondary" onclick="openAlightPreset()">Buka proyek di Alight Motion</button>
  </div>
  <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
-  <b>📦 Impor / simpan file preset dan XML</b>
-  <p class="muted">Pilih file XML atau paket proyek yang dibagikan kreator. File akan disimpan ulang tanpa mengubah isi.</p>
-  <label class="muted" for="amPresetFile">File preset / proyek</label>
-  <input id="amPresetFile" class="field" type="file" accept=".xml,.alight,.zip,application/xml,text/xml,application/zip"/>
-  <div class="tool-row"><button class="primary" onclick="inspectAlightFile()">Periksa file</button><button class="secondary" onclick="downloadAlightFile()">Unduh file asli</button><button class="secondary" onclick="downloadAlightXml()">Unduh XML</button><button class="secondary" onclick="clearAlightPreset()">Bersihkan</button></div>
-  <div id="amPresetOutput" class="output" aria-live="polite">Hasil pemeriksaan preset dan file XML akan tampil di sini.</div>
+  <b>📦 Ambil preset & XML lewat link</b>
+  <p class="muted">Tempel satu link yang dibagikan kreator. Link Alight Motion akan dibuka untuk impor ke aplikasi; link file langsung .xml/.zip/.alight akan dicoba diunduh.</p>
+  <label class="muted" for="amDownloadUrl">Link preset / XML / proyek</label>
+  <input id="amDownloadUrl" class="field" inputmode="url" placeholder="https://alight.link/... atau https://.../preset.xml"/>
+  <div class="tool-row"><button class="primary" onclick="getAlightFromLink()">Ambil preset & XML</button><button class="secondary" onclick="clearAlightPreset()">Bersihkan</button></div>
+  <div id="amPresetOutput" class="output" aria-live="polite">Tempel link proyek atau file preset/XML yang dibagikan kreator.</div>
  </div>
- <div class="note"><b>Cara menggunakan file</b><ol class="muted" style="line-height:1.7;padding-left:20px"><li>Masukkan link proyek Alight Motion dari kreator atau pilih file preset/proyek yang diberikan.</li><li>Untuk link, buka di HP Android dengan Alight Motion terpasang lalu tekan Import.</li><li>Untuk XML, unduh file XML lalu gunakan hanya pada aplikasi/alat yang mendukung format XML tersebut.</li><li>Untuk paket proyek, simpan file asli dan impor melalui Alight Motion jika formatnya didukung.</li></ol><small class="muted">Video TikTok hanya hasil render, bukan data layer, keyframe, efek, atau XML proyek. Ekstraksi otomatis dari video tidak tersedia.</small></div>
+ <div class="note"><b>Cara menggunakan link</b><ol class="muted" style="line-height:1.7;padding-left:20px"><li>Salin link preset/proyek yang dibagikan kreator.</li><li>Tempel ke kolom link, lalu tekan Ambil preset & XML.</li><li>Jika link Alight Motion, buka di Android dan tekan Import.</li><li>Jika link file XML/proyek langsung, file akan dicoba diunduh dari sumbernya.</li></ol><small class="muted">Link TikTok saja tidak berisi XML atau data proyek. File XML hanya bisa diunduh jika kreator memang menyediakan URL file XML.</small></div>
 </div></div></div></section>
   <section id="essay" class="page"><div class="panel"><h3>▧ Pembuat makalah</h3><input id="essayTopic" class="field" placeholder="Judul/topik makalah"><input id="essayLevel" class="field" placeholder="Jenjang / kelas (contoh: SMP kelas 8)"><button class="primary" onclick="makeDocument('essay')">Buat kerangka makalah</button><div id="essayOutput" class="output">Kerangka makalah akan muncul di sini.</div></div></section>
   <section id="slides" class="page"><div class="panel"><h3>▣ Pembuat presentasi</h3><input id="slideTopic" class="field" placeholder="Topik presentasi"><input id="slideCount" class="field" type="number" min="3" max="12" value="5" placeholder="Jumlah slide"><button class="primary" onclick="makeDocument('slides')">Buat rancangan slide</button><div id="slidesOutput" class="output">Rancangan presentasi akan muncul di sini.</div></div></section>
@@ -751,6 +760,27 @@ function checkAlightPreset(){
  }
  const small=document.createElement('small');small.className='muted';small.textContent='Pemeriksaan ini hanya mengenali format dan domain tautan. KONZZY PRIME tidak dapat memastikan isi preset sebelum dibuka di Alight Motion.';out.append(small);
 }
+async function getAlightFromLink(){
+ const raw=($('amDownloadUrl')?.value||'').trim(),out=$('amPresetOutput');out.textContent='';
+ let u;try{u=new URL(raw)}catch{out.textContent='Link tidak valid. Tempel link lengkap yang diawali https://';return}
+ if(!['https:','http:'].includes(u.protocol)){out.textContent='Hanya link http/https yang didukung.';return}
+ const host=u.hostname.toLowerCase();
+ const isAlight=/(^|\\.)(alight\\.link|alightmotion\\.com)$/.test(host);
+ if(isAlight){out.textContent='Link proyek Alight Motion terdeteksi. Membuka link agar bisa diimpor melalui aplikasi Alight Motion…';window.open(u.href,'_blank','noopener,noreferrer');return}
+ const path=u.pathname.toLowerCase();
+ const ext=path.match(/\\.(xml|zip|alight)$/);
+ if(!ext){out.textContent='Link ini bukan link Alight Motion atau URL file .xml/.zip/.alight langsung. Minta kreator membagikan link proyek Alight Motion atau link file preset.';return}
+ out.textContent='Mencoba mengunduh file preset dari link…';
+ try{
+  const res=await fetch(u.href,{mode:'cors'});if(!res.ok)throw new Error('Server sumber merespons '+res.status);
+  const blob=await res.blob();if(!blob.size)throw new Error('File kosong');
+  const objectUrl=URL.createObjectURL(blob),a=document.createElement('a');a.href=objectUrl;a.download='konnzzy-preset'+ext[0];document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
+  out.textContent='File '+ext[0]+' berhasil disiapkan untuk diunduh. Jika XML, file ini adalah XML dari kreator; bukan hasil konversi video.';
+ }catch(e){
+  out.textContent='Browser tidak dapat mengambil file dari server (misalnya dibatasi CORS). Coba buka link sumber secara langsung. Detail: '+e.message;
+  const a=document.createElement('a');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Buka link file sumber ↗';a.style='display:inline-block;margin-top:10px;color:var(--cyan);font-weight:800';out.append(a);
+ }
+}
 function openAlightPreset(){
  const raw=($('amProjectUrl')?.value||'').trim(),u=validWebLink(raw);
  if(!u||!isAlightHost(u.hostname)){toast('Tempel link proyek Alight Motion yang valid dulu');return}
@@ -779,7 +809,7 @@ function downloadAlightXml(){
  const url=URL.createObjectURL(f),a=document.createElement('a');a.href=url;a.download=f.name.replace(/\.xml$/i,'')+'-konnzzy.xml';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);out.textContent='Salinan XML disiapkan untuk diunduh.';
 }
 
-function clearAlightPreset(){if($('amSourceUrl'))$('amSourceUrl').value='';if($('amProjectUrl'))$('amProjectUrl').value='';if($('amPresetFile'))$('amPresetFile').value='';if($('amPresetOutput'))$('amPresetOutput').textContent='Hasil pemeriksaan preset dan file XML akan tampil di sini.'}
+function clearAlightPreset(){if($('amSourceUrl'))$('amSourceUrl').value='';if($('amProjectUrl'))$('amProjectUrl').value='';if($('amDownloadUrl'))$('amDownloadUrl').value='';if($('amPresetOutput'))$('amPresetOutput').textContent='Tempel link proyek atau file preset/XML yang dibagikan kreator.'}
 
 function validTikTok(){const u=$('tiktokUrl').value.trim();try{const x=new URL(u);if(!/(^|\.)tiktok\.com$/i.test(x.hostname))throw 0;return x.href}catch{toast('Masukkan tautan TikTok yang valid');return null}}
 function openTikTok(){const u=validTikTok();if(u)window.open(u,'_blank','noopener,noreferrer')}
