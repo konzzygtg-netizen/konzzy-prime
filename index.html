@@ -315,8 +315,11 @@ button,a,[role="button"],.nav-item,.feature-card,.quick-action,.clickable{ -webk
 @keyframes dtImageFade{from{opacity:0}to{opacity:1}}
 
 .owner-only.hidden{display:none!important}#ownerAccounts .field{margin-bottom:8px}#ownerAccounts .owner-account-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:13px;margin:9px 0;border:1px solid var(--line);border-radius:13px;background:#0b1528}#ownerAccounts .owner-account-row small{color:var(--muted)}
-/* Skip all startup intro animation and open directly to login/dashboard. */
-#introScreen{display:none!important;visibility:hidden!important;animation:none!important}
+/* Keep the KONZZY PRIME opening page, but show it completely static. */
+#introScreen{display:grid!important;visibility:visible!important;opacity:1!important;animation:none!important;transform:none!important}
+#introScreen *,#introScreen *:before,#introScreen *:after{animation:none!important;transition:none!important;transform:none!important;filter:none!important}
+#introScreen .ml-intro-content,#introScreen .ml-overline,#introScreen .ml-emblem,#introScreen .ml-brand-small,#introScreen .ml-brand-title,#introScreen .ml-divider,#introScreen .ml-tagline,#introScreen .ml-desc,#introScreen .ml-enter,#introScreen .ml-credit,#introScreen .ml-skip-hint{opacity:1!important;visibility:visible!important}
+#introScreen .ml-scene{opacity:1!important;filter:none!important}
 </style>
 </head>
 <body>
@@ -835,9 +838,9 @@ window.addEventListener('beforeunload',()=>{if(cameraStream)cameraStream.getTrac
 </script>
 <script>
 (()=>{
-  // Opening intro disabled: show the app/login screen immediately.
+  // Keep the KONZZY PRIME opening page visible without any animation.
   const intro=document.getElementById('introScreen');
-  if(intro) intro.remove();
+  if(intro){intro.style.display='grid';intro.classList.remove('hide');}
   function thirty(){return 30;}
   const selector='button,a,[role="button"],.nav-item,.feature-card,.quick-action,.clickable,[onclick]';
   document.addEventListener('pointerdown',e=>{
