@@ -512,12 +512,43 @@ function filterMenu(q){const term=(q||'').toLowerCase().trim();document.querySel
 function toast(s){$('toast').textContent=s;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2200)}
 function addHistory(q,a){let h=get('history');h.unshift({q,a,date:new Date().toLocaleString('id-ID')});put('history',h.slice(0,80));updateStats()}
 function updateStats(){$('statChats').textContent=get('history').length;$('statNotes').textContent=get('notes').length;$('statTasks').textContent=get('tasks').filter(t=>!t.done).length}
-function responseFor(q,mode='general'){let s=q.toLowerCase();if(/fotosintesis/.test(s))return'Fotosintesis adalah proses tumbuhan membuat makanan sendiri dengan bantuan cahaya matahari.\\n\\n1. Akar menyerap air.\\n2. Daun mengambil karbon dioksida dari udara.\\n3. Klorofil menangkap energi cahaya.\\n4. Tumbuhan menghasilkan glukosa dan oksigen.\\n\\nIntinya: air + karbon dioksida + cahaya → glukosa + oksigen.';if(/kinetik|potensial/.test(s))return'Energi kinetik adalah energi karena gerak, contohnya bola yang menggelinding. Energi potensial adalah energi karena posisi atau keadaan, contohnya buku di atas rak. Semakin cepat benda bergerak, semakin besar energi kinetiknya.';if(/belajar/.test(s))return'Tips belajar efektif:\\n1. Tentukan target kecil.\\n2. Belajar 25 menit lalu istirahat 5 menit.\\n3. Jauhkan notifikasi.\\n4. Coba jelaskan ulang materi dengan kata-katamu.\\n5. Kerjakan latihan soal dan evaluasi.';if(/halo|hai|hello/.test(s))return'Halo! Senang bertemu denganmu. Mau belajar mata pelajaran apa hari ini?';if(/\\d/.test(s)&&/[+*/=]/.test(s))return'Aku bisa bantu memahami soal hitungan. Pisahkan informasi yang diketahui, tentukan rumus yang sesuai, lalu hitung secara berurutan. Untuk hasil yang tepat, coba gunakan menu Kalkulator atau kirim soal lengkap.';return`Baik, mari kita bahas: "${q}".\\n\\nCara memahami topik ini:\\n1. Tentukan kata kunci dan informasi penting.\\n2. Pecah menjadi bagian-bagian kecil.\\n3. Hubungkan dengan contoh sehari-hari.\\n4. Buat kesimpulan menggunakan bahasamu sendiri.\\n\\nIni adalah jawaban simulasi KONZZY PRIME. Untuk jawaban AI yang benar-benar memahami pertanyaan bebas, diperlukan koneksi ke layanan AI online.`}
+const KONZZY_AI_ENDPOINT = "https://konzzy-prime-ai.konzzygtg.workers.dev/chat";
+let konZZyConversation = [];
+async function askKonzzyAI(userText, mode="general", task="chat"){
+  const modeText = mode==="creative" ? "Gunakan gaya kreatif, santai, hangat, dan tetap akurat." : mode==="formal" ? "Gunakan gaya profesional, rapi, dan jelas." : "Gunakan bahasa Indonesia yang ramah, jelas, dan mudah dipahami.";
+  const taskText = task==="homework" ? "Bantu selesaikan soal secara bertahap. Jelaskan konsep dan perhitungan, jangan hanya memberi hasil." : task==="summary" ? "Buat rangkuman terstruktur dengan judul, gagasan utama, poin penting, istilah kunci, dan kesimpulan." : "Jawab pertanyaan pengguna secara langsung dan lengkap. Jika tidak yakin, katakan dengan jujur.";
+  const messages = [{role:"system",content:"Kamu adalah KONZZY PRIME, asisten AI yang membantu pengguna belajar dan bekerja. "+modeText+" "+taskText+" Gunakan format yang mudah dibaca."}];
+  if(task==="chat") messages.push(...konZZyConversation.slice(-10));
+  messages.push({role:"user",content:userText});
+  const response = await fetch(KONZZY_AI_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages})});
+  const data = await response.json().catch(()=>({}));
+  if(!response.ok) throw new Error(data.error || ("Server AI merespons HTTP "+response.status));
+  if(!data.answer) throw new Error("Jawaban AI kosong. Coba lagi.");
+  if(task==="chat"){
+    konZZyConversation.push({role:"user",content:userText},{role:"assistant",content:data.answer});
+    konZZyConversation=konZZyConversation.slice(-12);
+  }
+  return data.answer;
+}
 function appendBubble(text,who){let d=document.createElement('div');d.className='bubble '+who;d.textContent=text;$('chatBox').appendChild(d);$('chatBox').scrollTop=$('chatBox').scrollHeight}
-function sendChat(){let q=$('chatInput').value.trim();if(!q)return;$('chatInput').value='';appendBubble(q,'me');let wait=document.createElement('div');wait.className='bubble bot thinking';wait.innerHTML='<span class="think-orb"></span><span>Sedang berpikir</span><span class="thinking-dots"><i></i><i></i><i></i></span>';$('chatBox').appendChild(wait);$('chatBox').scrollTop=$('chatBox').scrollHeight;let a=responseFor(q,$('aiMode').value);let delay=1000+Math.min(q.length*18,1700);setTimeout(()=>{wait.remove();appendBubble(a,'bot');addHistory(q,a)},delay)}
+async function sendChat(){
+  let q=$('chatInput').value.trim();if(!q)return;
+  $('chatInput').value='';appendBubble(q,'me');
+  let wait=document.createElement('div');wait.className='bubble bot thinking';wait.textContent='KONZZY PRIME sedang berpikir…';$('chatBox').appendChild(wait);$('chatBox').scrollTop=$('chatBox').scrollHeight;
+  try{let a=await askKonzzyAI(q,$('aiMode').value,'chat');wait.remove();appendBubble(a,'bot');addHistory(q,a)}
+  catch(err){wait.remove();let msg='AI belum bisa dihubungi: '+err.message+' Coba beberapa saat lagi.';appendBubble(msg,'bot');}
+}
 function quickAsk(q){showPage('chat');$('chatInput').value=q;sendChat()}
 function clearChat(){$('chatBox').innerHTML='';appendBubble('Percakapan baru dimulai. Ada yang bisa kubantu?','bot')}
-function generate(input,out,type){let q=$(input).value.trim();if(!q){toast('Masukkan teks terlebih dahulu');return}let a;if(type==='hw')a='Pembahasan contoh:\\n1. Baca soal dan catat informasi yang diketahui.\\n2. Tentukan apa yang ditanyakan.\\n3. Pilih konsep atau rumus yang sesuai.\\n4. Masukkan nilai dan hitung dengan teliti.\\n5. Periksa kembali jawaban.\\n\\nSoal kamu: '+q+'\\n\\nCatatan: ini kerangka bantuan demo. Untuk solusi akurat, diperlukan analisis AI online.';else{let words=q.replace(/[\\n]+/g,' ').split(/\\s+/).filter(Boolean),sent=q.split(/[.!?]+/).map(x=>x.trim()).filter(Boolean);a='RANGKUMAN MATERI\\n\\nTopik: '+(words.slice(0,6).join(' '))+'\\n\\nPoin penting:\\n'+sent.slice(0,5).map((x,i)=>(i+1)+'. '+x).join('\\n')+'\\n\\nKata kunci: '+words.slice(0,8).join(', ')+'\\n\\nKesimpulan: Pahami gagasan utama, istilah penting, dan hubungan antaride dalam materi.'}$(out).textContent=a;addHistory(q,a)}
+async function generate(input,out,type){
+  let q=$(input).value.trim();if(!q){toast('Masukkan teks terlebih dahulu');return}
+  const el=$(out);el.textContent='KONZZY PRIME sedang menganalisis…';
+  try{
+    const task=type==='homework'?'homework':'summary';
+    const a=await askKonzzyAI(q,'general',task);
+    el.textContent=a;addHistory(q,a);
+  }catch(err){el.textContent='AI belum bisa dihubungi: '+err.message+' Coba lagi beberapa saat.'}
+}
 function calculate(){let x=$('calcDisplay').value.trim();if(!/^[0-9+*/().%\\-\\s]+$/.test(x)){ $('calcResult').textContent='Ekspresi tidak valid.';return}try{let v=Function('"use strict";return ('+x+')')();$('calcResult').textContent='Hasil: '+v}catch{$('calcResult').textContent='Periksa kembali rumus.'}}
 function saveNote(){let title=$('noteTitle').value.trim(),body=$('noteBody').value.trim();if(!title||!body){toast('Isi judul dan catatan');return}let a=get('notes');a.unshift({title,body,date:new Date().toLocaleDateString('id-ID')});put('notes',a);$('noteTitle').value='';$('noteBody').value='';renderNotes();updateStats();toast('Catatan disimpan')}
 function renderNotes(){let a=get('notes');$('noteList').innerHTML=a.length?a.map((n,i)=>`<div class="note"><div style="display:flex;justify-content:space-between"><h4>${esc(n.title)}</h4><button class="muted" onclick="deleteNote(${i})">✕</button></div><small class="muted">${n.date}</small><p>${esc(n.body)}</p></div>`).join(''):'<p class="muted">Belum ada catatan.</p>'}
