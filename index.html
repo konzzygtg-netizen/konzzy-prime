@@ -646,9 +646,11 @@ function ownerDeleteAccount(key){
  const a=get('accounts',{});delete a[key];put('accounts',a);renderOwnerAccounts()
 }
 
-// Always show the branded KONZZY PRIME crown intro first on page load.
+// Startup must show the KONZZY PRIME intro, never the post-login K transition.
 const openingIntro=document.getElementById('introScreen');
-if(openingIntro){openingIntro.style.display='grid';openingIntro.classList.remove('hide');}
+const startupTransition=document.getElementById('dashboardTransition');
+if(startupTransition){startupTransition.classList.remove('show');startupTransition.style.display='none';}
+if(openingIntro){openingIntro.style.display='grid';openingIntro.style.visibility='visible';openingIntro.style.opacity='1';openingIntro.style.zIndex='2000';openingIntro.classList.remove('hide');}
 document.getElementById('loginScreen')?.classList.add('hidden');
 document.getElementById('app')?.classList.add('hidden');
 
