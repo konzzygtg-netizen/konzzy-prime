@@ -351,13 +351,13 @@ button,a,[role="button"],.nav-item,.feature-card,.quick-action,.clickable{ -webk
   <section class="login-showcase"><div class="login-mark">K<span>P</span></div><div class="login-showcase-copy"><small>WELCOME BACK TO</small><h1>KONZZY<br><em>PRIME</em></h1><p>Belajar, berkarya, dan temukan ide baru dalam satu ruang.</p></div><div class="login-showcase-foot">BY KONNZZY <span>✦</span> YOUR PERSONAL SPACE</div></section>
   <div class="login-card">
    <div class="login-step">ACCOUNT ACCESS <span>01 / 02</span></div>
-   <div class="auth-tabs"><button type="button" class="auth-tab active" id="tabLogin">LOGIN</button></div>
+   <div class="auth-tabs"><button type="button" class="auth-tab active" id="tabLogin" onclick="switchAuth('login')">LOGIN</button><button type="button" class="auth-tab" id="tabRegister" onclick="switchAuth('register')">BUAT AKUN</button></div>
    <div id="loginPanel" class="auth-panel"><div class="logo">Masuk ke akunmu</div><p class="sub">Lanjutkan perjalananmu bersama KONZZY PRIME.</p>
     <label class="muted" for="loginName">Nama pengguna</label><input id="loginName" class="field" placeholder="Masukkan nama pengguna" autocomplete="username">
     <label class="muted" for="loginPass">Kata sandi</label><input id="loginPass" class="field" type="password" placeholder="Masukkan kata sandi" autocomplete="current-password">
     <button class="primary login-submit" style="width:100%" onclick="login()"><span>MASUK KE KONZZY PRIME</span><b>→</b></button>
    </div>
-   <div id="registerPanel" class="auth-panel hidden" style="display:none!important"><div class="logo">Buat akun baru</div><p class="sub">Daftar untuk memulai perjalananmu.</p>
+   <div id="registerPanel" class="auth-panel hidden"><div class="logo">Buat akun baru</div><p class="sub">Daftar untuk memulai perjalananmu.</p>
     <label class="muted" for="registerName">Nama pengguna</label><input id="registerName" class="field" placeholder="Buat nama pengguna" autocomplete="username">
     <label class="muted" for="registerPass">Kata sandi</label><input id="registerPass" class="field" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password">
     <label class="muted" for="registerPlan">Pilih paket</label><select id="registerPlan" class="field"><option value="Member Permanent">Member Permanent — Rp15.000</option><option value="Reseller">Reseller — Rp40.000</option><option value="Owner">Owner Package — Rp115.000</option></select>
@@ -452,7 +452,7 @@ let currentUser=localStorage.getItem('nexus_user')||'';
 const get=(key,def=[])=>{try{return JSON.parse(localStorage.getItem('nexus_'+key)||JSON.stringify(def))}catch{return def}};
 const put=(key,val)=>localStorage.setItem('nexus_'+key,JSON.stringify(val));
 function switchAuth(mode){const reg=mode==='register';$('loginPanel').classList.toggle('hidden',reg);$('registerPanel').classList.toggle('hidden',!reg);$('tabLogin').classList.toggle('active',!reg);$('tabRegister').classList.toggle('active',reg);document.querySelector('.login-step').innerHTML=reg?'CREATE ACCOUNT <span>02 / 02</span>':'ACCOUNT ACCESS <span>01 / 02</span>'}
-function registerAccount(){alert('Pembuatan akun hanya dapat dilakukan Owner.');return;let n=$('registerName').value.trim(),p=$('registerPass').value,plan=$('registerPlan').value;if(!n||p.length<6){alert('Isi nama pengguna dan kata sandi minimal 6 karakter.');return}if(n.toLowerCase()==='konzzy'){alert('Nama Konzzy khusus untuk Owner.');return}let accounts=get('accounts',{}),existing=accounts[n.toLowerCase()];if(existing){if(existing.password!==p){alert('Nama pengguna sudah digunakan.');return}}else{accounts[n.toLowerCase()]={name:n,password:p,plan:plan,status:'Menunggu verifikasi Owner',createdAt:new Date().toISOString()};put('accounts',accounts)}$('loginName').value=n;$('loginPass').value=p;const prices={'Member Permanent':15000,'Reseller':40000,'Owner':115000,'Owner Package':115000};$('payAmount').textContent='Rp'+(prices[plan]||15000).toLocaleString('id-ID');$('paymentPanel').classList.remove('hidden');$('paymentStatus').textContent='Status: menunggu pembayaran dan verifikasi Owner.';$('paymentPanel').scrollIntoView({behavior:'smooth',block:'nearest'})}
+function registerAccount(){let n=$('registerName').value.trim(),p=$('registerPass').value,plan=$('registerPlan').value;if(!n||p.length<6){alert('Isi nama pengguna dan kata sandi minimal 6 karakter.');return}if(n.toLowerCase()==='konzzy'){alert('Nama Konzzy khusus untuk Owner.');return}let accounts=get('accounts',{}),existing=accounts[n.toLowerCase()];if(existing){if(existing.password!==p){alert('Nama pengguna sudah digunakan.');return}}else{accounts[n.toLowerCase()]={name:n,password:p,plan:plan,status:'Menunggu verifikasi Owner',createdAt:new Date().toISOString()};put('accounts',accounts)}$('loginName').value=n;$('loginPass').value=p;const prices={'Member Permanent':15000,'Reseller':40000,'Owner':115000,'Owner Package':115000};$('payAmount').textContent='Rp'+(prices[plan]||15000).toLocaleString('id-ID');$('paymentPanel').classList.remove('hidden');$('paymentStatus').textContent='Status: menunggu pembayaran dan verifikasi Owner.';$('paymentPanel').scrollIntoView({behavior:'smooth',block:'nearest'})}
 function copyPayNumber(){const num='083897672897';if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(num).then(()=>toast('Nomor tujuan disalin')).catch(()=>alert('Nomor tujuan: '+num))}else{alert('Nomor tujuan: '+num)}}
 function submitPaymentNotice(){const n=$('registerName').value.trim(),accounts=get('accounts',{}),acc=accounts[n.toLowerCase()];if(!acc){alert('Buat akun terlebih dahulu.');return}acc.status='Menunggu verifikasi pembayaran Owner';acc.paymentNoticeAt=new Date().toISOString();acc.paymentProofName=$('paymentProof').files[0]?.name||'';accounts[n.toLowerCase()]=acc;put('accounts',accounts);$('paymentStatus').textContent='Konfirmasi tersimpan di browser ini. Hubungi Owner untuk mengirim bukti dan menunggu aktivasi.';alert('Konfirmasi lokal tersimpan. Ini belum mengirim bukti ke Owner secara online.')}
 function login(){
@@ -784,6 +784,28 @@ window.addEventListener('beforeunload',()=>{if(cameraStream)cameraStream.getTrac
 }
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+</style>
+<style id="kp-login-mobile-scroll-fix">
+/* Login/register: allow the whole form to scroll on phones. */
+.login-wrap{min-height:100vh;min-height:100dvh;display:grid;place-items:center;overflow:visible}
+.login-shell{overflow:visible;align-items:stretch}
+.login-card{min-width:0;max-height:none;overflow:visible}
+.auth-tabs{grid-template-columns:1fr 1fr;position:sticky;top:0;z-index:5}
+#registerPanel,#loginPanel{min-width:0}
+@media(max-width:760px){
+  html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto!important}
+  .login-wrap{display:block;padding:12px 12px max(28px,env(safe-area-inset-bottom));}
+  .login-shell{display:block;width:100%;min-height:0;overflow:visible;border-radius:20px}
+  .login-showcase{min-height:190px;padding:20px 22px;gap:16px}
+  .login-showcase-copy h1{font-size:38px;margin:8px 0}
+  .login-showcase-copy p{margin:8px 0}
+  .login-showcase-foot{font-size:9px}
+  .login-card{width:100%;padding:20px 17px;border-radius:0 0 20px 20px;box-shadow:none}
+  .login-wrap .field{font-size:16px}
+  .auth-tabs{margin-bottom:18px}
+  #paymentPanel{scroll-margin-top:14px}
+  .login-bottom{display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between}
 }
 </style>
 </body></html>
