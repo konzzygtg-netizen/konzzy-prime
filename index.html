@@ -430,19 +430,34 @@ button,a,[role="button"],.nav-item,.feature-card,.quick-action,.clickable{ -webk
   <section id="qris" class="page"><div class="panel" style="max-width:720px"><h3>▦ Pembuat QR / QRIS</h3><p class="muted">Tempel teks QRIS dari bank atau penyedia pembayaran untuk membuat gambar QR yang bisa dipindai. Aplikasi ini tidak menerbitkan QRIS merchant baru.</p><label class="muted">Data QRIS / teks / tautan</label><textarea id="qrText" class="field" rows="4" placeholder="Tempel payload QRIS atau masukkan teks/tautan..."></textarea><div class="tool-row"><button class="primary" onclick="makeQR()">Buat QR</button><button class="secondary" onclick="clearQR()">Bersihkan</button></div><div id="qrOutput" class="output" style="text-align:center">QR akan muncul di sini.</div><p class="muted" style="font-size:12px">Untuk pembayaran sungguhan, gunakan kode QRIS resmi dari bank/e-wallet/penyedia berizin. Jangan mengubah isi payload QRIS.</p></div></section>
   <section id="media" class="page"><div class="panel"><h3>📷 Kamera, Video & TikTok</h3><p class="muted">Ambil foto atau rekam video menggunakan kamera perangkat. Browser akan meminta izin kamera/mikrofon.</p><div class="tool-row"><button class="primary" onclick="startCamera()">Buka kamera</button><button class="secondary" onclick="takePhoto()">Ambil foto</button><button class="secondary" onclick="toggleRecording()" id="recordBtn">Mulai rekam video</button><button class="secondary" onclick="stopCamera()">Matikan kamera</button></div><video id="cameraView" autoplay playsinline muted style="width:min(100%,640px);background:#080d1b;border-radius:14px;display:block;max-height:360px"></video><canvas id="photoCanvas" class="hidden"></canvas><div id="mediaOutput" class="output">Hasil foto/video akan tampil di sini.</div><div style="margin-top:26px;border-top:1px solid var(--line);padding-top:18px"><h3>▶ TikTok: Video, Foto & Sound</h3><p class="muted">Tempel tautan video, postingan foto/slideshow, atau halaman sound TikTok. KONZZY PRIME akan mengenali jenis tautan dan membuka konten aslinya. Simpan hanya jika opsi unduh dari TikTok/pemilik konten tersedia.</p><input id="tiktokUrl" class="field" placeholder="Tempel link TikTok di sini..."/><div class="tool-row"><button class="primary" onclick="previewTikTok()">Periksa & pratinjau</button><button class="secondary" onclick="openTikTok()">Buka di TikTok</button><button class="secondary" onclick="copyTikTokLink()">Salin link</button></div><div id="tiktokPreview" class="output">Hasil pemeriksaan tautan akan tampil di sini.</div><div class="note" style="margin-top:12px"><b>Cara menyimpan konten secara resmi</b><ol class="muted" style="line-height:1.7;padding-left:20px"><li><b>Video:</b> buka postingan di TikTok → Bagikan → Simpan video (jika diizinkan).</li><li><b>Foto/slideshow:</b> buka postingan → Bagikan → Simpan foto (jika tersedia).</li><li><b>Sound:</b> buka halaman sound → gunakan menu Bagikan atau Simpan ke Favorit. Audio tidak diekstrak otomatis oleh aplikasi ini.</li></ol><small class="muted">Jika tombol simpan tidak muncul, kreator membatasi unduhan atau TikTok tidak menyediakan opsi tersebut. Hindari situs yang meminta kata sandi TikTok.</small></div>
 <div style="margin-top:26px;border-top:1px solid var(--line);padding-top:18px">
+ <h3>⬇️ Download MP4</h3>
+ <p class="muted">Tempel URL file MP4 langsung yang dibagikan pemiliknya dan memang boleh diunduh. Link halaman TikTok bukan URL file MP4, jadi tidak bisa diproses sebagai file langsung.</p>
+ <label class="muted" for="mp4DirectUrl">URL MP4 langsung</label>
+ <input id="mp4DirectUrl" class="field" inputmode="url" placeholder="https://server-izin-pemilik.com/video.mp4"/>
+ <div class="tool-row"><button class="primary" onclick="downloadAllowedMp4()">Download MP4</button><button class="secondary" onclick="clearMp4Url()">Bersihkan</button></div>
+ <div id="mp4DownloadOutput" class="output" aria-live="polite">Tempel tautan file MP4 yang disediakan pemilik video.</div>
+ <small class="muted">Tidak mengambil video dari halaman TikTok, tidak melewati pengaturan unduhan, dan tidak menghapus watermark. Jika kreator mengaktifkan Simpan video, gunakan opsi resmi TikTok.</small>
+</div>
+<div style="margin-top:26px;border-top:1px solid var(--line);padding-top:18px">
  <h3>✦ Preset Alight Motion (AM)</h3>
- <p class="muted">Tempel link TikTok untuk melihat panduan mencari preset, atau tempel link proyek Alight Motion/Alight Link yang dibagikan kreator untuk membukanya di aplikasi Android.</p>
- <label class="muted" for="amSourceUrl">Link TikTok / VT</label>
+ <p class="muted">Ambil file preset dari tautan yang dibagikan kreator, atau unggah file XML/proyek yang sudah kamu dapatkan. KONZZY PRIME tidak bisa membangun preset asli hanya dari video MP4.</p>
+ <label class="muted" for="amSourceUrl">Link video TikTok (referensi)</label>
  <input id="amSourceUrl" class="field" inputmode="url" placeholder="https://vt.tiktok.com/..."/>
- <label class="muted" for="amProjectUrl">Link proyek Alight Motion (jika ada)</label>
+ <label class="muted" for="amProjectUrl">Link proyek Alight Motion dari kreator</label>
  <input id="amProjectUrl" class="field" inputmode="url" placeholder="https://alight.link/..."/>
  <div class="tool-row">
-  <button class="primary" onclick="checkAlightPreset()">Periksa preset</button>
-  <button class="secondary" onclick="openAlightPreset()">Buka di Alight Motion</button>
-  <button class="secondary" onclick="clearAlightPreset()">Bersihkan</button>
+  <button class="primary" onclick="checkAlightPreset()">Periksa link preset</button>
+  <button class="secondary" onclick="openAlightPreset()">Buka proyek di Alight Motion</button>
  </div>
- <div id="amPresetOutput" class="output" aria-live="polite">Hasil pemeriksaan preset akan tampil di sini.</div>
- <div class="note"><b>Cara impor ke Alight Motion</b><ol class="muted" style="line-height:1.7;padding-left:20px"><li>Minta kreator menyertakan link proyek Alight Motion atau QR preset.</li><li>Tempel link proyek pada kolom kedua, lalu tekan Periksa preset.</li><li>Buka link di HP Android dan pilih Alight Motion jika diminta.</li><li>Di aplikasi, tekan tombol Import/Impor untuk menyimpan proyek.</li></ol><small class="muted">Video TikTok biasa bukan file preset. KONZZY PRIME tidak mengunduh atau mengekstrak preset dari video, komentar, atau akun privat secara otomatis.</small></div>
+ <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--line)">
+  <b>📦 Impor / simpan file preset dan XML</b>
+  <p class="muted">Pilih file XML atau paket proyek yang dibagikan kreator. File akan disimpan ulang tanpa mengubah isi.</p>
+  <label class="muted" for="amPresetFile">File preset / proyek</label>
+  <input id="amPresetFile" class="field" type="file" accept=".xml,.alight,.zip,application/xml,text/xml,application/zip"/>
+  <div class="tool-row"><button class="primary" onclick="inspectAlightFile()">Periksa file</button><button class="secondary" onclick="downloadAlightFile()">Unduh file asli</button><button class="secondary" onclick="downloadAlightXml()">Unduh XML</button><button class="secondary" onclick="clearAlightPreset()">Bersihkan</button></div>
+  <div id="amPresetOutput" class="output" aria-live="polite">Hasil pemeriksaan preset dan file XML akan tampil di sini.</div>
+ </div>
+ <div class="note"><b>Cara menggunakan file</b><ol class="muted" style="line-height:1.7;padding-left:20px"><li>Masukkan link proyek Alight Motion dari kreator atau pilih file preset/proyek yang diberikan.</li><li>Untuk link, buka di HP Android dengan Alight Motion terpasang lalu tekan Import.</li><li>Untuk XML, unduh file XML lalu gunakan hanya pada aplikasi/alat yang mendukung format XML tersebut.</li><li>Untuk paket proyek, simpan file asli dan impor melalui Alight Motion jika formatnya didukung.</li></ol><small class="muted">Video TikTok hanya hasil render, bukan data layer, keyframe, efek, atau XML proyek. Ekstraksi otomatis dari video tidak tersedia.</small></div>
 </div></div></div></section>
   <section id="essay" class="page"><div class="panel"><h3>▧ Pembuat makalah</h3><input id="essayTopic" class="field" placeholder="Judul/topik makalah"><input id="essayLevel" class="field" placeholder="Jenjang / kelas (contoh: SMP kelas 8)"><button class="primary" onclick="makeDocument('essay')">Buat kerangka makalah</button><div id="essayOutput" class="output">Kerangka makalah akan muncul di sini.</div></div></section>
   <section id="slides" class="page"><div class="panel"><h3>▣ Pembuat presentasi</h3><input id="slideTopic" class="field" placeholder="Topik presentasi"><input id="slideCount" class="field" type="number" min="3" max="12" value="5" placeholder="Jumlah slide"><button class="primary" onclick="makeDocument('slides')">Buat rancangan slide</button><div id="slidesOutput" class="output">Rancangan presentasi akan muncul di sini.</div></div></section>
@@ -689,6 +704,30 @@ function takePhoto(){const v=$('cameraView');if(!cameraStream||!v.videoWidth){to
 function toggleRecording(){if(!cameraStream){toast('Buka kamera terlebih dahulu');return}if(mediaRecorder&&mediaRecorder.state==='recording'){mediaRecorder.stop();$('recordBtn').textContent='Mulai rekam video';return}try{recordedChunks=[];mediaRecorder=new MediaRecorder(cameraStream);mediaRecorder.ondataavailable=e=>{if(e.data.size)recordedChunks.push(e.data)};mediaRecorder.onstop=()=>{const blob=new Blob(recordedChunks,{type:mediaRecorder.mimeType||'video/webm'}),url=URL.createObjectURL(blob);$('mediaOutput').innerHTML='';const video=document.createElement('video');video.src=url;video.controls=true;video.style='width:100%;max-width:640px;border-radius:12px';$('mediaOutput').append(video);const a=document.createElement('a');a.href=url;a.download='konnzzy-prime-video.webm';a.textContent='Unduh video';a.style='display:block;margin-top:12px;color:var(--cyan)';$('mediaOutput').append(a)};mediaRecorder.start();$('recordBtn').textContent='Stop rekam';toast('Perekaman dimulai')}catch(e){toast('Perekaman tidak didukung: '+e.message)}}
 function stopCamera(){if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;$('cameraView').srcObject=null;toast('Kamera dimatikan')}
 
+
+function clearMp4Url(){if($('mp4DirectUrl'))$('mp4DirectUrl').value='';if($('mp4DownloadOutput'))$('mp4DownloadOutput').textContent='Tempel tautan file MP4 yang disediakan pemilik video.'}
+async function downloadAllowedMp4(){
+ const raw=($('mp4DirectUrl')?.value||'').trim(),out=$('mp4DownloadOutput');out.textContent='';
+ let u;try{u=new URL(raw)}catch{out.textContent='URL tidak valid. Tempel URL file MP4 lengkap.';return}
+ if(u.protocol!=='https:'&&u.protocol!=='http:'){out.textContent='Hanya URL http/https yang didukung.';return}
+ if(/(^|\.)tiktok\.com$/i.test(u.hostname)){out.textContent='Itu link halaman TikTok, bukan URL file MP4 langsung. Gunakan opsi Simpan video resmi dari kreator.';return}
+ const pathMp4=/\.mp4(?:$|[?#])/i.test(u.href);
+ if(!pathMp4){out.textContent='URL ini tidak terlihat seperti file .mp4 langsung. Gunakan tautan file MP4 yang disediakan pemiliknya.';return}
+ out.textContent='Mencoba mengambil file MP4 dari server sumber…';
+ try{
+  const res=await fetch(u.href,{mode:'cors'});
+  if(!res.ok)throw new Error('Server menolak permintaan ('+res.status+').');
+  const type=(res.headers.get('content-type')||'').toLowerCase();
+  if(type&&!type.includes('video')&&!type.includes('octet-stream'))throw new Error('Tautan tidak mengembalikan file video.');
+  const blob=await res.blob();if(!blob.size)throw new Error('File kosong.');
+  const blobUrl=URL.createObjectURL(blob),a=document.createElement('a');a.href=blobUrl;a.download='konnzzy-prime-video.mp4';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(blobUrl),60000);
+  out.textContent='File MP4 berhasil disiapkan untuk diunduh.';
+ }catch(e){
+  out.textContent='Browser tidak diizinkan mengambil file dari server sumber (CORS atau akses server). KONZZY PRIME tidak dapat memaksa unduhan. Coba buka URL file yang disediakan pemiliknya langsung. Detail: '+e.message;
+  const a=document.createElement('a');a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Buka URL MP4 sumber ↗';a.style='display:inline-block;margin-top:10px;color:var(--cyan);font-weight:800';out.append(a);
+ }
+}
+
 function validWebLink(raw){try{const u=new URL((raw||'').trim());return u.protocol==='https:'||u.protocol==='http:'?u:null}catch{return null}}
 function isTikTokHost(host){return /(^|\.)tiktok\.com$/i.test(host)}
 function isAlightHost(host){return /(^|\.)(alight\.link|alightmotion\.com)$/i.test(host)}
@@ -717,7 +756,30 @@ function openAlightPreset(){
  if(!u||!isAlightHost(u.hostname)){toast('Tempel link proyek Alight Motion yang valid dulu');return}
  window.open(u.href,'_blank','noopener,noreferrer');
 }
-function clearAlightPreset(){if($('amSourceUrl'))$('amSourceUrl').value='';if($('amProjectUrl'))$('amProjectUrl').value='';if($('amPresetOutput'))$('amPresetOutput').textContent='Hasil pemeriksaan preset akan tampil di sini.'}
+function inspectAlightFile(){
+ const f=$('amPresetFile')?.files?.[0],out=$('amPresetOutput');out.textContent='';
+ if(!f){out.textContent='Pilih file XML atau paket proyek terlebih dahulu.';return}
+ const ext=(f.name.split('.').pop()||'').toLowerCase();
+ if(!['xml','alight','zip'].includes(ext)){out.textContent='Format belum didukung. Pilih .xml, .alight, atau .zip.';return}
+ if(ext==='xml'){
+  const reader=new FileReader();reader.onload=()=>{const raw=String(reader.result||''),doc=new DOMParser().parseFromString(raw,'application/xml');
+   if(doc.querySelector('parsererror')){out.textContent='File memiliki kesalahan XML atau bukan XML yang valid.';return}
+   out.textContent='XML valid: '+f.name+' ('+f.size+' byte). KONZZY PRIME dapat menyimpan ulang XML ini, tetapi tidak mengubahnya menjadi proyek Alight Motion jika struktur aslinya bukan format proyek.'};
+  reader.onerror=()=>out.textContent='Gagal membaca file XML.';reader.readAsText(f);return;
+ }
+ out.textContent='File paket terdeteksi: '+f.name+' ('+f.size+' byte). Isi paket tidak diubah. Pastikan file berasal dari kreator dan kompatibel dengan versi Alight Motion kamu.';
+}
+function downloadAlightFile(){
+ const f=$('amPresetFile')?.files?.[0],out=$('amPresetOutput');if(!f){out.textContent='Pilih file proyek atau preset terlebih dahulu.';return}
+ const url=URL.createObjectURL(f),a=document.createElement('a');a.href=url;a.download=f.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);out.textContent='File asli disiapkan untuk diunduh: '+f.name;
+}
+function downloadAlightXml(){
+ const f=$('amPresetFile')?.files?.[0],out=$('amPresetOutput');if(!f){out.textContent='Pilih file XML terlebih dahulu.';return}
+ if(!f.name.toLowerCase().endsWith('.xml')){out.textContent='File yang dipilih bukan XML. Tombol ini hanya menyalin file XML, bukan mengonversi paket proyek menjadi XML.';return}
+ const url=URL.createObjectURL(f),a=document.createElement('a');a.href=url;a.download=f.name.replace(/\.xml$/i,'')+'-konnzzy.xml';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);out.textContent='Salinan XML disiapkan untuk diunduh.';
+}
+
+function clearAlightPreset(){if($('amSourceUrl'))$('amSourceUrl').value='';if($('amProjectUrl'))$('amProjectUrl').value='';if($('amPresetFile'))$('amPresetFile').value='';if($('amPresetOutput'))$('amPresetOutput').textContent='Hasil pemeriksaan preset dan file XML akan tampil di sini.'}
 
 function validTikTok(){const u=$('tiktokUrl').value.trim();try{const x=new URL(u);if(!/(^|\.)tiktok\.com$/i.test(x.hostname))throw 0;return x.href}catch{toast('Masukkan tautan TikTok yang valid');return null}}
 function openTikTok(){const u=validTikTok();if(u)window.open(u,'_blank','noopener,noreferrer')}
