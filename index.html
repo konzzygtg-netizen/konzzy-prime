@@ -540,9 +540,9 @@ function updateUser(){
  const formatted=isNaN(date.getTime())?'—':date.toLocaleString('id-ID',{dateStyle:'long',timeStyle:'short'});
  if($('accountDisplayName'))$('accountDisplayName').textContent=isOwner?'Selamat datang, Owner!':'Selamat datang, '+n+'!';
  if($('accountPlanText'))$('accountPlanText').textContent=plan+' · Berlaku: '+expiryText;
- if($('accountRoleBadge'))$('accountRoleBadge').textContent='● '+(isOwner?'OWNER':(acc?.plan==='Reseller'?'RESELLER':'MEMBER'));
+ if($('accountRoleBadge'))$('accountRoleBadge').textContent='● '+(isOwner?'OWNER':(acc?.plan==='Reseller'?'RESELLER':(acc?.plan==='Partner Member'?'PARTNER MEMBER':'MEMBER')));
  if($('loginTimeText'))$('loginTimeText').textContent='Waktu masuk: '+formatted;
- if($('sideAccountMeta'))$('sideAccountMeta').textContent=isOwner?'OWNER • LIFETIME':(acc?.plan==='Reseller'?'RESELLER':'MEMBER');
+ if($('sideAccountMeta'))$('sideAccountMeta').textContent=isOwner?'OWNER • LIFETIME':(acc?.plan==='Reseller'?'RESELLER':(acc?.plan==='Partner Member'?'PARTNER MEMBER':'MEMBER'));
  const ownerNav=$('ownerAccountsNav');if(ownerNav)ownerNav.classList.toggle('hidden',!isOwner);const resellerNav=$('resellerAccountsNav');if(resellerNav)resellerNav.classList.toggle('hidden',!(acc?.plan==='Reseller'));
 }
 const titles={resellerAccounts:'Buat Akun Member',dashboard:'Dashboard',chat:'AI Chat',homework:'Bantuan PR',summary:'Rangkuman Materi',calculator:'Kalkulator',notes:'Catatan',tasks:'Jadwal Tugas',quiz:'Kuis Otomatis',translate:'Penerjemah',essay:'Pembuat Makalah',slides:'Pembuat Presentasi',image:'Upload Foto Soal',history:'Riwayat Percakapan',profile:'Profil & Pengaturan',ownerAccounts:'Kelola Akun Member',plugins:'Plugin Library',library:'Image Library',imagegen:'AI Image Studio'};
