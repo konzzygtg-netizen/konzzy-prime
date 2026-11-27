@@ -1,0 +1,2 @@
+# konzzy-prime
+hanya percobaan 
