@@ -765,10 +765,10 @@ async function getAlightFromLink(){
  let u;try{u=new URL(raw)}catch{out.textContent='Link tidak valid. Tempel link lengkap yang diawali https://';return}
  if(!['https:','http:'].includes(u.protocol)){out.textContent='Hanya link http/https yang didukung.';return}
  const host=u.hostname.toLowerCase();
- const isAlight=/(^|\\.)(alight\\.link|alightmotion\\.com)$/.test(host);
+ const isAlight=/(^|\.)(alight\.link|alightmotion\.com)$/.test(host);
  if(isAlight){out.textContent='Link proyek Alight Motion terdeteksi. Membuka link agar bisa diimpor melalui aplikasi Alight Motion…';window.open(u.href,'_blank','noopener,noreferrer');return}
  const path=u.pathname.toLowerCase();
- const ext=path.match(/\\.(xml|zip|alight)$/);
+ const ext=path.match(/\.(xml|zip|alight)$/);
  if(!ext){out.textContent='Link ini bukan link Alight Motion atau URL file .xml/.zip/.alight langsung. Minta kreator membagikan link proyek Alight Motion atau link file preset.';return}
  out.textContent='Mencoba mengunduh file preset dari link…';
  try{
