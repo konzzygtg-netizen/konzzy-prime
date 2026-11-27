@@ -690,8 +690,8 @@ function toggleRecording(){if(!cameraStream){toast('Buka kamera terlebih dahulu'
 function stopCamera(){if(mediaRecorder&&mediaRecorder.state==='recording')mediaRecorder.stop();if(cameraStream)cameraStream.getTracks().forEach(t=>t.stop());cameraStream=null;$('cameraView').srcObject=null;toast('Kamera dimatikan')}
 
 function validWebLink(raw){try{const u=new URL((raw||'').trim());return u.protocol==='https:'||u.protocol==='http:'?u:null}catch{return null}}
-function isTikTokHost(host){return /(^|\\.)tiktok\\.com$/i.test(host)}
-function isAlightHost(host){return /(^|\\.)(alight\\.link|alightmotion\\.com)$/i.test(host)}
+function isTikTokHost(host){return /(^|\.)tiktok\.com$/i.test(host)}
+function isAlightHost(host){return /(^|\.)(alight\.link|alightmotion\.com)$/i.test(host)}
 function checkAlightPreset(){
  const source=($('amSourceUrl')?.value||'').trim(),project=($('amProjectUrl')?.value||'').trim(),out=$('amPresetOutput');
  out.innerHTML='';
